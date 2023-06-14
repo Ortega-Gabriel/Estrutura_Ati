@@ -1,6 +1,9 @@
 package com.mycompany.atiestrutura;
 
 import com.mycompany.atiestrutura.models.Cliente;
+import com.mycompany.atiestrutura.models.ClienteBanco;
+import com.mycompany.atiestrutura.models.Fila;
+import com.mycompany.atiestrutura.models.FilaCliente;
 import javax.swing.JOptionPane;
 
 public class AtiEstrutura {
@@ -8,26 +11,31 @@ public class AtiEstrutura {
     private static Cliente[] clientes;
     private static int qtdCliente;
     
+    private static FilaCliente filaPriori;
+    private static FilaCliente filaNormal;
+    private static int contPriori;
+    private static int contNormal;
+    
         
     
     public static void main(String[] args) {
         qtdCliente = 0;
         
-        /*Atividade 1 - Recursividade
+        //Atividade 1 - Recursividade
         JOptionPane.showMessageDialog(null, "Atividade 1 - Recursividade!");
         int somaFinal = RecurAti1(0);
-        JOptionPane.showMessageDialog(null, "A Soma de 1 a 50 é: "+somaFinal);*/
+        JOptionPane.showMessageDialog(null, "A Soma de 1 a 50 é: "+somaFinal);
         
-        /*Atividade 2 - Recursividade
+        //Atividade 2 - Recursividade
         JOptionPane.showMessageDialog(null, "Atividade 2 - Recursividade!");
         int num = Integer.parseInt(JOptionPane.showInputDialog(null,
                 "Informe um Número Inteiro para ser Fatorado"));
         int fat = RecurAti2(num);
         JOptionPane.showMessageDialog(null, 
                 "Número Fatorado: "+num+"\n"
-                + "Fatorial: "+fat);*/
+                + "Fatorial: "+fat);
         
-        /*Atividade 3 - Recursividade
+        //Atividade 3 - Recursividade
         JOptionPane.showMessageDialog(null, "Atividade 3 - Recursividade!");
         String msg = "";
         int num2 = Integer.parseInt(JOptionPane.showInputDialog(null,
@@ -38,17 +46,25 @@ public class AtiEstrutura {
         for(int i = 0; i <= num2 -2; i++){
             msg += RecurAti3(i) + "\n";
         }
-        JOptionPane.showMessageDialog(null, msg);*/
+        JOptionPane.showMessageDialog(null, msg);
         
-        /*Atividade 1 - Pesquisa Linear e Binária!
+        //Atividade 1 - Pesquisa Linear e Binária!
         JOptionPane.showMessageDialog(null, "Atividade 1 - Pesquisa Linear "
                 + "e Binária!");
-        PesqAti1();*/
+        PesqAti1();
         
         //Atividade 2 - Pesquisa Linear e Binária!
         JOptionPane.showMessageDialog(null, "Atividade 2 - Pesquisa Linear "
                 + "e Binária");
         PesqAti2(clientes, qtdCliente);
+        
+        //Atividade 1 - Filas!
+        JOptionPane.showMessageDialog(null, "Atividade 1 - Filas!");
+        FilaAti1();
+        
+        //Atividade 2 - Filas!
+        JOptionPane.showMessageDialog(null, "Atividade 2 - Filas!");
+        FilaAti2();
         
     }
     
@@ -144,6 +160,115 @@ public class AtiEstrutura {
                     break;
                 default:
             }
+        }while(selOper != 0);
+    }
+    
+    //Métodos das Atividades de Fila
+    public static void FilaAti1(){
+        Fila fila = new Fila(20);
+        int numAtual = 1;
+        
+        int selOper = 1;
+        do{
+           selOper = Integer.parseInt(JOptionPane.showInputDialog(null, 
+                   "Selecione a Operação que Deseja Realizar: \n"
+                   + "1 - Adicionar Paciente \n"
+                   + "2 - Chamar o Próximo Cliente \n"
+                   + "0 - Cancelar Operação"));
+           
+           switch(selOper){
+               case 1:
+                   if(!fila.isFull()){
+                       int numCliente = Integer.parseInt(
+                               JOptionPane.showInputDialog(null, "Informe o "
+                               + "Número do Paciente"));
+                       
+                       fila.enqueue(numCliente);
+                       JOptionPane.showMessageDialog(null, "Paciente Adicionado"
+                               + " a Fila");
+                   }else{
+                       JOptionPane.showMessageDialog(null, "A Fila está Cheia");
+                   }
+                   break;
+               case 2:
+                   if(!fila.isEmpty()){
+                       int proxCliente = fila.dequeue();
+                       JOptionPane.showMessageDialog(null, "Próximo Cliente: "
+                        + proxCliente);
+                       numAtual++;
+                   }else{
+                       JOptionPane.showMessageDialog(null, "A Fila está Vazia");
+                   }
+                   break;
+               case 0:
+                   JOptionPane.showMessageDialog(null, "Operação Cancelada");
+                   break;
+               default:
+                   JOptionPane.showMessageDialog(null, "Opção Inválida");
+           }
+            
+        }while(selOper != 0);
+    }
+    public static void FilaAti2(){
+        filaPriori = new FilaCliente(100);
+        filaNormal = new FilaCliente(100);
+        
+        int selOper = 1;
+        do{
+            selOper = Integer.parseInt(JOptionPane.showInputDialog(null, 
+                    "Selecione uma Opção \n"
+                            + "1 - Adicionar Cliente \n"
+                            + "2 - Chamar Próximo da Fila \n"
+                            + "0 - Cancelar Operação \n"));
+            switch(selOper){
+                case 1:
+                    String nmCliente = JOptionPane.showInputDialog(null,
+                            "Informe o Nome do Cliente: ");
+                    int anoNasc = Integer.parseInt(JOptionPane.showInputDialog(
+                        null, "Informe o Ano de Nascimento do Cliente"));
+                    
+                    ClienteBanco clienteNovo = new ClienteBanco(nmCliente,
+                            anoNasc);
+                    clienteNovo.setNomeCliente(nmCliente);
+                    clienteNovo.setAnoNasc(anoNasc);
+                    
+                    if(clienteNovo.isPriori()){
+                        filaPriori.enqueue(clienteNovo);
+                        contPriori++;
+                    }else{
+                        filaNormal.enqueue(clienteNovo);
+                        contNormal++;
+                    }
+                    JOptionPane.showMessageDialog(null, "Cliente Adicionado "
+                            + "a Fila");
+                    break;
+                case 2:
+                    if(contPriori >= 1){
+                        ClienteBanco clientePriori1 = filaPriori.dequeue();
+                        contPriori -= 2;
+                        
+                        JOptionPane.showMessageDialog(null, "Chamando Próximo "
+                                + "Cliente Prioritário");
+                        JOptionPane.showMessageDialog(null, clientePriori1); 
+                    }else if(contNormal > 0){
+                        ClienteBanco clienteNormal = filaNormal.dequeue();
+                        contNormal--;
+                        
+                        JOptionPane.showMessageDialog(null, "Chamando Próximo "
+                                + "Cliente Normal");
+                        JOptionPane.showMessageDialog(null, clienteNormal);
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Não há Clientes "
+                                + "para Chamar no Momento");
+                    }
+                    break;
+                case 0:
+                    JOptionPane.showMessageDialog(null, "Operação Cancelada!");
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Opção Inválida");
+            }
+            
         }while(selOper != 0);
     }
     
